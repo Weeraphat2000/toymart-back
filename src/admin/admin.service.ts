@@ -1,26 +1,20 @@
 import { Injectable } from '@nestjs/common';
 import { CreateAdminDto } from './dto/create-admin.dto';
 import { UpdateAdminDto } from './dto/update-admin.dto';
+import { PrismaService } from 'src/prisma/prisma.service';
 
 @Injectable()
 export class AdminService {
-  create(createAdminDto: CreateAdminDto) {
-    return 'This action adds a new admin';
+  constructor(private readonly prismaService: PrismaService) {}
+  create(data: CreateAdminDto) {
+    return this.prismaService.user.create({ data });
   }
 
-  findAll() {
-    return `This action returns all admin`;
+  findUserByEmail(email: string) {
+    return this.prismaService.user.findFirst({ where: { email } });
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} admin`;
-  }
-
-  update(id: number, updateAdminDto: UpdateAdminDto) {
-    return `This action updates a #${id} admin`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} admin`;
+  findSuperAdmin(id: number) {
+    return this.prismaService.user.findFirst({ where: { id } });
   }
 }

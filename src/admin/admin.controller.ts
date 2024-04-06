@@ -1,34 +1,60 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  Headers,
+  NotFoundException,
+  BadRequestException,
+} from '@nestjs/common';
 import { AdminService } from './admin.service';
-import { CreateAdminDto } from './dto/create-admin.dto';
+import { AdminDto, CreateAdminDto, LoginDto } from './dto/create-admin.dto';
 import { UpdateAdminDto } from './dto/update-admin.dto';
+import { BcryptService } from 'src/service/bcrypt.service';
+import { AuthService } from 'src/service/authService.service';
 
 @Controller('admin')
 export class AdminController {
-  constructor(private readonly adminService: AdminService) {}
+  constructor(
+    private readonly adminService: AdminService,
+    private readonly bcryptService: BcryptService,
+    private readonly authService: AuthService,
+  ) {}
 
   @Post()
-  create(@Body() createAdminDto: CreateAdminDto) {
+  createAdmin(@Body() createAdminDto: CreateAdminDto) {
     return this.adminService.create(createAdminDto);
   }
 
-  @Get()
-  findAll() {
-    return this.adminService.findAll();
+  @Post('/superAdmin-auto-login')
+  autoLogin(@Body() body: AdminDto) {
+    console.log(body);
+    return { user: body };
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.adminService.findOne(+id);
+  @Post('/superAdmin-login')
+  async superAdminLogin(@Body() body: LoginDto) {
+    const user = await this.adminService.findUserByEmail(body.email);
+    if (!user) {
+      throw new NotFoundException(['email or password invaild']);
+    }
+    const checkPassword = this.bcryptService.compareSync(
+      body.password,
+      user.password,
+    );
+    if (!checkPassword) {
+      throw new BadRequestException(['email or password invalid']);
+    }
+    const token = await this.authService.createToken({ userId: user.id });
+    delete user.password;
+    return { user, token };
   }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateAdminDto: UpdateAdminDto) {
-    return this.adminService.update(+id, updateAdminDto);
-  }
-
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.adminService.remove(+id);
+  @Post('/dmin-login')
+  adminLogin(@Body() body: LoginDto) {
+    console.log(body);
   }
 }
