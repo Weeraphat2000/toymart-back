@@ -5,7 +5,7 @@ import { PrismaService } from 'src/prisma/prisma.service';
 
 @Injectable()
 export class AdminService {
-  constructor(private readonly prismaService: PrismaService) {}
+  constructor(protected readonly prismaService: PrismaService) {}
   create(data: CreateAdminDto) {
     return this.prismaService.user.create({ data });
   }
@@ -14,7 +14,7 @@ export class AdminService {
     return this.prismaService.user.findFirst({ where: { email } });
   }
 
-  findSuperAdmin(id: number) {
+  findUserById(id: number) {
     return this.prismaService.user.findFirst({ where: { id } });
   }
 }

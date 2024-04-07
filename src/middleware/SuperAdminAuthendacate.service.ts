@@ -15,7 +15,7 @@ export class SuperAdminAuthendacate implements NestMiddleware {
   ) {
     const token = req.headers.authorization.split(' ')[1];
     const playload = this.authService.verify(token);
-    const superAdmin = await this.adminService.findSuperAdmin(playload.userId);
+    const superAdmin = await this.adminService.findUserById(playload.userId);
     delete superAdmin.password;
     req.body = superAdmin;
     next();

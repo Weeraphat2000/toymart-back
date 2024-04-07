@@ -29,9 +29,14 @@ export class AdminController {
     return this.adminService.create(createAdminDto);
   }
 
-  @Post('/superAdmin-auto-login')
-  autoLogin(@Body() body: AdminDto) {
-    console.log(body);
+  // @Post('/superAdmin-auto-login')
+  // superAdminAutoLogin(@Body() body: AdminDto) {
+  //   console.log(body);
+  //   return { user: body };
+  // }
+
+  @Post('/admin-auto-login')
+  adminautoLogin(@Body() body: AdminDto) {
     return { user: body };
   }
 

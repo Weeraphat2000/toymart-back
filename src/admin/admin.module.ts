@@ -20,9 +20,12 @@ import { JwtModule } from '@nestjs/jwt';
 })
 export class AdminModule {
   configure(consumer: MiddlewareConsumer) {
-    consumer.apply(SuperAdminAuthendacate).forRoutes({
-      path: 'admin/superAdmin-auto-login',
-      method: RequestMethod.POST,
-    });
+    consumer.apply(SuperAdminAuthendacate).forRoutes(
+      {
+        path: 'admin/superAdmin-auto-login',
+        method: RequestMethod.POST,
+      },
+      { path: 'admin/admin-auto-login', method: RequestMethod.POST },
+    );
   }
 }

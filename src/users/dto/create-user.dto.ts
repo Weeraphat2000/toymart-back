@@ -50,3 +50,33 @@ export class CreateUserDto {
 
 //   @IsNotEmpty({ message: 'role is not empty' })
 //   role: 'USER' | 'ADMIN' | 'SUPERADMIN';
+
+export class UserAddresDto {
+  @IsNotEmpty({ message: 'first name is require' })
+  firstName: string;
+
+  @IsNotEmpty({ message: 'last name is require' })
+  lastName: string;
+
+  @IsNotEmpty({ message: 'phone is require' })
+  @Length(10, 10, { message: 'phone invalid' })
+  phone: string;
+
+  @IsNotEmpty({ message: 'city village is not empty' })
+  cityVillage: string;
+
+  @IsOptional()
+  apartmentSuite: string;
+
+  @IsNotEmpty({ message: 'province is not empty' })
+  province: string;
+
+  @IsNotEmpty({ message: 'city village is not empty' })
+  zipCode: string;
+
+  @IsNotEmpty({ message: 'city village is not empty' })
+  other: string;
+
+  @IsOptional()
+  setDefault: boolean;
+}
