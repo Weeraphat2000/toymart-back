@@ -13,12 +13,15 @@ import {
   NotFoundException,
   ValidationPipe,
   ParseIntPipe,
+  Request,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDto, UserAddresDto } from './dto/create-user.dto';
 import { UpdateUserAdressDto, UpdateUserDto } from './dto/update-user.dto';
 import { BcryptService } from 'src/service/bcrypt.service';
 import { AuthService } from 'src/service/authService.service';
+import { CustomRequest } from 'src/middleware/authendicate.service';
+// import { Request, Response } from 'express';
 
 @Controller('users')
 export class UsersController {
@@ -59,24 +62,47 @@ export class UsersController {
     return { user: userUser, token };
   }
 
-  @Get('/address/:userId')
-  async getAddress(@Param('userId', ParseIntPipe) userId: number) {
-    return await this.usersService.getAddress(userId);
+  @Get('/allAddress') // ✅
+  async getAddress(@Request() req: CustomRequest) {
+    return { allAddress: await this.usersService.getAddress(req.user.id) };
   }
 
-  @Post('/create-address/:userId')
+  @Post('/create-address') // ✅
   async createAddress(
-    @Param('userId', ParseIntPipe) userId: number,
+    @Request() req: CustomRequest,
     @Body() body: UserAddresDto,
   ) {
-    return await this.usersService.createAddress(userId, body);
+    return await this.usersService.createAddress(req.user.id, body);
   }
 
-  @Patch('/update-address/:id')
-  async updateAddress(
-    @Param('id', ParseIntPipe) id: number,
-    @Body() body: UpdateUserAdressDto,
+  @Delete('/delete-address/:addressId') // ✅
+  async deleteAddress(
+    @Param('addressId', ParseIntPipe) addressId: number,
+    @Request() req: CustomRequest,
   ) {
+    const check = await this.usersService.findAddressByUserIdAndAddressId(
+      req.user.id,
+      addressId,
+    );
+    if (!check) {
+      throw new NotFoundException('address id invalid');
+    }
+    return this.usersService.deleteAddress(addressId);
+  }
+
+  @Patch('/update-address/:addressId') // ✅
+  async updateAddress(
+    @Param('addressId', ParseIntPipe) id: number,
+    @Body() body: UpdateUserAdressDto,
+    @Request() req: CustomRequest,
+  ) {
+    const check = await this.usersService.findAddressByUserIdAndAddressId(
+      req.user.id,
+      id,
+    );
+    if (!check) {
+      throw new NotFoundException('address id invalid');
+    }
     return await this.usersService.updateAddres(id, body);
   }
 
@@ -134,7 +160,7 @@ export class UsersController {
     }
   }
 
-  @Post('/login')
+  @Post('/login') // ✅
   async login(@Body() body: { email: string; password: string }) {
     const user = await this.usersService.findUserByEmail(body.email);
     if (!user) {
@@ -152,9 +178,19 @@ export class UsersController {
     return { user, token };
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.usersService.findOne(+id);
+  // @Get('/') // ✅
+  // findOne(@Body('user') req: CustomRequest) {
+  //   return req;
+  // }
+  @Get('/') // ✅
+  finOne(@Request() req: CustomRequest) {
+    console.log(req.user, 'users');
+    return { user: req.user };
+  }
+  @Get('/profile') // ✅
+  async getprofile(@Request() req: CustomRequest) {
+    const userProfile = await this.usersService.getProfileById(req.user.id);
+    return { userProfile };
   }
 
   @Patch(':id')

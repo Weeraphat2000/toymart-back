@@ -3,6 +3,8 @@ import { CreateUserDto, UserAddresDto } from './dto/create-user.dto';
 import { UpdateUserAdressDto, UpdateUserDto } from './dto/update-user.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { AdminService } from 'src/admin/admin.service';
+import { Prisma, $Enums } from '@prisma/client';
+import { DefaultArgs } from '@prisma/client/runtime/library';
 
 @Injectable()
 export class UsersService extends AdminService {
@@ -13,6 +15,17 @@ export class UsersService extends AdminService {
   // findUserByEmail(email: string) {
   //   return this.prismaService.user.findFirst({ where: { email } });
   // }
+  findAddressByUserIdAndAddressId(userId: number, id: number) {
+    return this.prismaService.userAddress.findFirst({ where: { userId, id } });
+  }
+
+  deleteAddress(id: number) {
+    return this.prismaService.userAddress.delete({ where: { id } });
+  }
+
+  getProfileById(id: number) {
+    return this.prismaService.userProfile.findFirst({ where: { id } });
+  }
 
   creatTableUser(data: {
     email: string;
@@ -28,10 +41,27 @@ export class UsersService extends AdminService {
     });
   }
 
+  findUserByEmail(email: string): Prisma.Prisma__UserClient<
+    {
+      id: number;
+      email: string;
+      password: string;
+      role: $Enums.Role;
+      isActive: boolean;
+    },
+    null,
+    DefaultArgs
+  > {
+    return this.prismaService.user.findFirst({
+      where: { email },
+      include: { userProfile: true },
+    });
+  }
+
   findUserById(id: number) {
     return this.prismaService.user.findFirst({
       where: { id },
-      include: { userAddresses: true },
+      include: { userProfile: true },
     });
   }
 

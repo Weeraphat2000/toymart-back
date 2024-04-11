@@ -11,7 +11,9 @@ export class AdminService {
   }
 
   findUserByEmail(email: string) {
-    return this.prismaService.user.findFirst({ where: { email } });
+    return this.prismaService.user.findFirst({
+      where: { email },
+    });
   }
 
   findUserById(id: number) {
