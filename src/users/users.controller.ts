@@ -6,8 +6,6 @@ import {
   Patch,
   Param,
   Delete,
-  HttpException,
-  HttpStatus,
   BadRequestException,
   Headers,
   NotFoundException,
@@ -57,7 +55,10 @@ export class UsersController {
     await this.usersService.createReward(user.id);
     // const userProfile = await this.usersService.creatUserProfile(user.id, )
     const userUser = await this.usersService.createUser(createUserDto, user.id);
-    const token = await this.authService.createToken({ userId: user.id });
+    const token = await this.authService.createToken({
+      userId: user.id,
+      role: user.role,
+    });
 
     return { user: userUser, token };
   }
@@ -174,7 +175,10 @@ export class UsersController {
       throw new NotFoundException(['email or password invalid']);
     }
     delete user.password;
-    const token = await this.authService.createToken({ userId: user.id });
+    const token = await this.authService.createToken({
+      userId: user.id,
+      role: user.role,
+    });
     return { user, token };
   }
 

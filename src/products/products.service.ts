@@ -7,13 +7,37 @@ import { PrismaService } from 'src/prisma/prisma.service';
 export class ProductsService {
   constructor(private readonly prismaService: PrismaService) {}
   create(createProductDto: CreateProductDto) {
-    return 'This action adds a new product';
+    // return this.prismaService.pr
+    return 'ยังไม่ได้ทำเลยจ้ะ';
+  }
+
+  getProductByProductId(id: number) {
+    return this.prismaService.products.findFirst({
+      where: { id },
+      include: {
+        productSeries: true,
+        productGroup: true,
+        productCover: true,
+        productImages: true,
+        productPosters: true,
+      },
+    });
+  }
+
+  getAllProduct() {
+    return this.prismaService.products.findMany({
+      include: {
+        productSeries: true,
+        productGroup: true,
+        productCover: true,
+        productImages: true,
+        productPosters: true,
+      },
+    });
   }
 
   findAll() {
-    return this.prismaService.products.findMany({
-      include: { productImages: true, productCover: true },
-    });
+    return this.prismaService.productGroup.findMany();
   }
 
   findAllByUserId(userId: number) {

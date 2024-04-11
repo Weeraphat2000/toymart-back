@@ -16,25 +16,24 @@ import { UpdateProductDto } from './dto/update-product.dto';
 export class ProductsController {
   constructor(private readonly productsService: ProductsService) {}
 
-  @Post()
+  @Post() // create product
   create(@Body() createProductDto: CreateProductDto) {
     return this.productsService.create(createProductDto);
   }
 
-  @Get()
+  @Get('/group') // ✅
   findAll() {
-    console.log('first');
     return this.productsService.findAll();
   }
 
-  @Get(':userId')
-  findOne(@Param('userId', ParseIntPipe) userId: number) {
-    return this.productsService.findAllByUserId(userId);
+  @Get('') // ✅ alllproduct
+  findOne() {
+    return this.productsService.getAllProduct();
   }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateProductDto: UpdateProductDto) {
-    return this.productsService.update(+id, updateProductDto);
+  @Get(':id') // ✅ product by id
+  update(@Param('id', ParseIntPipe) id: number) {
+    return this.productsService.getProductByProductId(id);
   }
 
   @Delete(':id')

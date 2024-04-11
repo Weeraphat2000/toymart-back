@@ -12,7 +12,17 @@ import { TransactionModule } from './transaction/transaction.module';
 import { PrismaModule } from './prisma/prisma.module';
 
 @Module({
-  imports: [AdminModule, ProductsModule, UsersModule, WatchListModule, CartModule, PageModule, ChatModule, TransactionModule, PrismaModule],
+  imports: [
+    AdminModule,
+    ProductsModule,
+    UsersModule,
+    WatchListModule,
+    CartModule,
+    PageModule,
+    ChatModule,
+    TransactionModule,
+    PrismaModule,
+  ],
   controllers: [AppController],
   providers: [AppService],
 })

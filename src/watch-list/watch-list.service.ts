@@ -1,26 +1,30 @@
 import { Injectable } from '@nestjs/common';
 import { CreateWatchListDto } from './dto/create-watch-list.dto';
 import { UpdateWatchListDto } from './dto/update-watch-list.dto';
+import { PrismaService } from 'src/prisma/prisma.service';
 
 @Injectable()
 export class WatchListService {
-  create(createWatchListDto: CreateWatchListDto) {
-    return 'This action adds a new watchList';
+  constructor(private readonly prismaService: PrismaService) {}
+
+  findAllByUserId(userId: number) {
+    return this.prismaService.watchList.findMany({
+      where: { userId },
+      include: { products: { include: { productCover: true } } },
+    });
   }
 
-  findAll() {
-    return `This action returns all watchList`;
+  findProductByUserIdAndProductId(userId: number, productId: number) {
+    return this.prismaService.watchList.findFirst({
+      where: { userId, productId },
+    });
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} watchList`;
+  cteateWatchList(userId: number, productId: number) {
+    return this.prismaService.watchList.create({ data: { userId, productId } });
   }
 
-  update(id: number, updateWatchListDto: UpdateWatchListDto) {
-    return `This action updates a #${id} watchList`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} watchList`;
+  deleteWatchList(id: number) {
+    return this.prismaService.watchList.delete({ where: { id } });
   }
 }

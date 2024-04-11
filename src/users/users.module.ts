@@ -17,6 +17,7 @@ import { Authenticate } from 'src/middleware/authendicate.service';
       // signOptions: { expiresIn: '1h' }, // ตั้งค่าอื่น ๆ ตามต้องการ
     }),
   ],
+  exports: [UsersService],
 })
 export class UsersModule {
   configure(consumer: MiddlewareConsumer) {

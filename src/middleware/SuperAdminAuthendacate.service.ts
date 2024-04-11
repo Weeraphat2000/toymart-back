@@ -1,4 +1,5 @@
-import { Injectable, NestMiddleware } from '@nestjs/common';
+import { Injectable, NestMiddleware, NotFoundException } from '@nestjs/common';
+import e from 'express';
 import { AdminService } from 'src/admin/admin.service';
 import { AuthService } from 'src/service/authService.service';
 
@@ -13,11 +14,21 @@ export class SuperAdminAuthendacate implements NestMiddleware {
     res: any,
     next: (error?: any) => void,
   ) {
-    const token = req.headers.authorization.split(' ')[1];
-    const playload = this.authService.verify(token);
-    const superAdmin = await this.adminService.findUserById(playload.userId);
-    delete superAdmin.password;
-    req.body = superAdmin;
-    next();
+    try {
+      const token = req.headers.authorization.split(' ')[1];
+      const playload = this.authService.verify(token);
+      const superAdmin = await this.adminService.findUserById(playload.userId);
+      delete superAdmin.password;
+      if (superAdmin.role == 'USER') {
+        throw new NotFoundException('ไม่ได้รับอณุญาติ');
+      }
+      req.body = superAdmin;
+      next();
+    } catch (error) {
+      if (error?.response?.statusCode == 404) {
+        throw new NotFoundException(error.response.message);
+      }
+      throw new NotFoundException('token invalid');
+    }
   }
 }

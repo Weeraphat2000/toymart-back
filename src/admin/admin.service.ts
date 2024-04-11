@@ -19,4 +19,31 @@ export class AdminService {
   findUserById(id: number) {
     return this.prismaService.user.findFirst({ where: { id } });
   }
+
+  addminLogin(email: string) {
+    return this.prismaService.user.findFirst({
+      where: { email },
+      include: { userProfile: true },
+    });
+  }
+
+  getAllUser() {
+    return this.prismaService.user.findMany({
+      where: { role: 'USER' },
+      include: { userProfile: true },
+    });
+  }
+
+  getAllAdmin() {
+    return this.prismaService.user.findMany({
+      where: { role: 'ADMIN' },
+    });
+  }
+
+  banUserByUserId(id: number, ban: boolean) {
+    return this.prismaService.user.update({
+      where: { id },
+      data: { isActive: ban },
+    });
+  }
 }

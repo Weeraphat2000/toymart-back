@@ -1,4 +1,10 @@
-import { IsEmail, IsNotEmpty, IsString, Matches } from 'class-validator';
+import {
+  Equals,
+  IsEmail,
+  IsNotEmpty,
+  IsString,
+  Matches,
+} from 'class-validator';
 
 export class CreateAdminDto {
   @IsEmail()
@@ -9,6 +15,10 @@ export class CreateAdminDto {
   @IsString()
   @IsNotEmpty({ message: 'password is not empty' })
   password: string;
+
+  @IsString()
+  @Equals('password', { message: 'password and confirm password not match' }) // password == confrimPassword ไหม
+  confirmPassword: string;
 
   @Matches('ADMIN')
   @IsNotEmpty({ message: 'role is not empty' })

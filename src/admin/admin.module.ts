@@ -6,11 +6,14 @@ import { SuperAdminAuthendacate } from 'src/middleware/SuperAdminAuthendacate.se
 import { BcryptService } from 'src/service/bcrypt.service';
 import { AuthService } from 'src/service/authService.service';
 import { JwtModule } from '@nestjs/jwt';
+import { UsersModule } from 'src/users/users.module';
+import { UsersService } from 'src/users/users.service';
 
 @Module({
   controllers: [AdminController],
   providers: [AdminService, BcryptService, AuthService],
   imports: [
+    UsersModule,
     PrismaModule,
     JwtModule.register({
       secret: 'a', // กำหนดค่า SECRET_KEY ที่นี่
@@ -26,6 +29,9 @@ export class AdminModule {
         method: RequestMethod.POST,
       },
       { path: 'admin/admin-auto-login', method: RequestMethod.POST },
+      { path: 'admin/register', method: RequestMethod.POST },
+      { path: 'admin/all-user', method: RequestMethod.GET },
+      { path: 'admin/all-admin', method: RequestMethod.GET },
     );
   }
 }
